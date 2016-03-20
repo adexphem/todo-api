@@ -1,22 +1,13 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+
 var app = express();
 var PORT = process.env.PORT || 3100;
+var todoNextId = 1;
 
-var todos = [{
-	id: 1,
-	decription: 'Through with the tutorial?',
-	completed: false
-},
-{
-	id: 2,
-	description: 'Get the laravel videos',
-	completed: true
-},
-{
-	id: 3,
-	description: 'Arrange class for teenagers in church',
-	completed: false
-}];
+app.use(bodyParser.json());
+
+var todos = [];
 
 app.get('/', function (req, res) {
 	res.send('To Do API root');
@@ -33,9 +24,7 @@ app.get('/todos/:id', function(req, res) {
 	var todoMatchCase;
 
 	todos.forEach(function(itemObj) {
-		console.log(itemObj.id + ' ' + todoId);
 		if (itemObj.id === todoId) {
-			console.log(itemObj.id + ' ' + todoId);
 			todoMatchCase = itemObj;
 		}
 	});
@@ -47,6 +36,30 @@ app.get('/todos/:id', function(req, res) {
 	}
 })
 
+/* POST to add todos*/
+app.post('/todos', function(req, res) {
+	var body = req.body;
+
+	body.id = todoNextId;
+	todoNextId++;
+	todos.push(body);
+
+	res.json(body);
+});
+
 app.listen(PORT, function() {
 	console.log('Express Server Started on '+ PORT);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
