@@ -48,6 +48,23 @@ app.post('/todos', function(req, res) {
 	res.json(body);
 });
 
+/*DELETE /todos/:id */
+app.delete('/todos/:id', function(req, res) {
+	var todoIdToDelete = parseInt(req.params.id);
+	var todoArrayMatch = _.findWhere(todos, {id: todoIdToDelete});
+
+	var errorMessage = {
+		error: 'No todo Id: ' + todoIdToDelete + ' found'
+	};
+
+	if (!todoArrayMatch) {
+		res.status(404).json(errorMessage);
+	} else {
+		todos = _.without(todos, todoArrayMatch);
+		res.json(todoArrayMatch);
+	}
+})
+
 app.listen(PORT, function() {
 	console.log('Express Server Started on '+ PORT);
 });
