@@ -48,7 +48,7 @@ app.post('/todos', function(req, res) {
 	res.json(body);
 });
 
-/*DELETE /todos/:id */
+/* DELETE /todos/:id */
 app.delete('/todos/:id', function(req, res) {
 	var todoIdToDelete = parseInt(req.params.id);
 	var todoArrayMatch = _.findWhere(todos, {id: todoIdToDelete});
@@ -63,6 +63,36 @@ app.delete('/todos/:id', function(req, res) {
 		todos = _.without(todos, todoArrayMatch);
 		res.json(todoArrayMatch);
 	}
+});
+
+/* PUT /todos/:id */
+app.put('/todos/:id', function(req, res) {
+	var body = req.body;
+	var validAttributes = {};
+
+	var todoId = parseInt(req.params.id);
+	var todoArrayMatch = _.findWhere(todos, {id: todoId});
+
+	if (!todoArrayMatch) {
+		return res.status(404).send();
+	} 
+
+	body = _.pick(body, 'description', 'completed');
+	
+	if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
+		validAttributes.completed = body.completed;
+	} else if(body.hasOwnProperty('completed')) {
+		return res.status(404).send();
+	}
+
+	if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0) {
+		validAttributes.description = body.description;
+	} else if(body.hasOwnProperty('description')) {
+		return res.status(404).send();
+	}
+
+	_.extend(todoArrayMatch, validAttributes); 
+	res.json(todoArrayMatch);
 })
 
 app.listen(PORT, function() {
