@@ -143,6 +143,28 @@ app.put('/todos/:id', function(req, res) {
 	});
 });
 
+
+/* POST to add user accounts*/
+app.post('/users', function(req, res) {
+	var body = req.body;
+	var response = {
+		error: 'Failure'
+	}
+
+	body = _.pick(body, 'email', 'password');
+	console.log(body);
+
+	db.user.create({
+		email: body.email.trim(),
+		password: body.password 
+	}).then(function (user){
+		console.log('User saved!');
+		res.status(202).json(user.toJSON());
+	}).catch(function (e) {
+		res.status(400).json(e);
+	});
+});
+
 db.sequelize.sync().then(function (){
 	app.listen(PORT, function() {
 		console.log('Express Server Started on '+ PORT);
