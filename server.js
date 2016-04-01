@@ -159,7 +159,7 @@ app.post('/users', function(req, res) {
 		password: body.password 
 	}).then(function (user){
 		console.log('User saved!');
-		res.status(202).json(user.toJSON());
+		res.status(202).json(user.toPublicJSON());
 	}).catch(function (e) {
 		res.status(400).json(e);
 	});
