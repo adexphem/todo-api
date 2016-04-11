@@ -2,7 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var db = require('./db.js');
-var bcrypt = require('bcrypt')
+var bcrypt = require('bcrypt');
+var middleware = require('./middleware.js')(db);
 
 var app = express();
 var PORT = process.env.PORT || 3100;
@@ -17,7 +18,7 @@ app.get('/', function (req, res) {
 });
 
 /* GET /todos?completed=true */
-app.get('/todos', function(req, res) {
+app.get('/todos', middleware.requireAuthentication, function(req, res) {
 	var query = req.query;
 	var conditions = {};
 
@@ -49,7 +50,7 @@ app.get('/todos', function(req, res) {
 })
 
 /* GET /todos/:id */
-app.get('/todos/:id', function(req, res) {
+app.get('/todos/:id', middleware.requireAuthentication, function(req, res) {
 	var todoId = parseInt(req.params.id);
 	var todoMatchCase = _.findWhere(todos, {id: todoId});
 
@@ -65,7 +66,7 @@ app.get('/todos/:id', function(req, res) {
 })
 
 /* POST to add todos*/
-app.post('/todos', function(req, res) {
+app.post('/todos', middleware.requireAuthentication, function(req, res) {
 	var body = req.body;
 	var response = {
 		error: 'Failure'
@@ -86,7 +87,7 @@ app.post('/todos', function(req, res) {
 });
 
 /* DELETE /todos/:id */
-app.delete('/todos/:id', function(req, res) {
+app.delete('/todos/:id', middleware.requireAuthentication, function(req, res) {
 	var todoIdToDelete = parseInt(req.params.id);
 
 	db.todo.findById(todoIdToDelete).then(function (todo) {
@@ -113,7 +114,7 @@ app.delete('/todos/:id', function(req, res) {
 });
 
 /* PUT /todos/:id */
-app.put('/todos/:id', function(req, res) {
+app.put('/todos/:id', middleware.requireAuthentication, function(req, res) {
 	var body = req.body;
 	var attributes = {};
 
@@ -182,11 +183,11 @@ app.post('/users/login', function(req, res) {
 		if (token) {
 			res.header('Auth', token).json(user.toPublicJSON());
 		} else {
-			res.status(401).send();
+			res.status(401).send('errorr');
 		}
 		
 	}, function () {
-		res.status(401).send();
+		res.status(401).send('msgError');
 	});
 });
 
