@@ -72,9 +72,7 @@ module.exports = function (sequelize, DataTypes) {
 						var bytes = cryptojs.AES.decrypt(decodedJWT.token, 'abc123!@#!');
 						var tokeData = JSON.parse(bytes.toString(cryptojs.enc.Utf8));
 
-						console.log(tokeData);;
-
-						user.finById(tokeData.id).then(function (user) {
+						user.findById(tokeData.id).then(function (user) {
 							if (user) {
 								resolve(user);
 							} else {
