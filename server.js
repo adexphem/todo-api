@@ -76,10 +76,13 @@ app.post('/todos', middleware.requireAuthentication, function(req, res) {
 
 	db.todo.create({
 		description: body.description.trim(),
-		completed: body.completed 
+		completed: body.completed
 	}).then(function (todos){
-		console.log('saved!');
-		res.status(202).json(todos.toJSON());
+		req.user.addTodo(todos).then(function (){
+			return todos.reload();
+		}).then(function(todos) {
+			res.json(todos.toJSON());
+		})
 	}).catch(function (e) {
 		console.log(e);
 		res.status(404).json(e.TypeError);

@@ -21,7 +21,7 @@ var Todo = sequelize.define('todo', {
 })
 
 sequelize.sync({
-	//force: true
+	force: true
 }).then(function () {
 
 	Todo.findById(200).then(function (todo){
@@ -30,33 +30,5 @@ sequelize.sync({
 		} else {
 			console.log('Not found');
 		}
-	})
-
-	/*Todo.create({
-		description: 'Its good friday'
-	}).then(function (todo) {
-		return Todo.create({
-			description: 'Reall easter time'
-		});
-	}).then(function (){
-		//return Todo.findById(1)
-
-		return Todo.findAll({
-			where: {
-				description: {
-					$like: '%friday%'
-				}
-			}
-		});
-	}).then(function (todos){
-		if (todos) {
-			todos.forEach(function (todo) {
-				console.log(todo.toJSON());
-			})
-		} else {
-			consoe.log('no todo found');
-		}
-	}).catch(function (e) {
-		console.log(e);
-	})*/
+	});
 });
